@@ -6,5 +6,11 @@ urlpatterns = [
     path('categories/',CategoryListCreateView.as_view(),name="category-list-create"),
     
     # get, put/patch or delete -> http://127.0.0.1:8000/api/categories/pk/  -> pk -> id
-    path('categories/<int:pk>/',CategoryRetriveUpdateDeleteView.as_view(),name="cat-retrive-update-delete")
+    path('categories/<int:pk>/',CategoryRetriveUpdateDeleteView.as_view(),name="cat-retrive-update-delete"),
+    
+    # get or post -> http://127.0.0.1:8000/api/products/
+    path('products/',ProductListCreateView.as_view(),name="product-list-create"),
+    
+    # get, put/patch or delete -> http://127.0.0.1:8000/api/products/pk/  -> pk -> id
+    path('products/<int:pk>/',ProductRetriveUpdateDeleteView.as_view(),name="product-retrive-update-delete")
 ]
