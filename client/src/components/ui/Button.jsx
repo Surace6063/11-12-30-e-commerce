@@ -1,4 +1,6 @@
 import clsx from "clsx"
+import { twMerge } from 'tailwind-merge'
+import cn from "../../libs/cn"
 
 const Button = ({children,className,variant="primary",size="md"}) => {
 
@@ -14,7 +16,7 @@ const Button = ({children,className,variant="primary",size="md"}) => {
     }
    
   return (
-    <button className={clsx('cursor-pointer  rounded-full',className,variants[variant],sizes[size])}>
+    <button className={cn('cursor-pointer px-2  rounded-full',className,variants[variant],sizes[size])}>
         {children}
     </button>
   )
