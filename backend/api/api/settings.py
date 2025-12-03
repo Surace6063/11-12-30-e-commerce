@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
+    "corsheaders",
     
     #app
     'store',
@@ -57,6 +58,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = 'api.urls'
@@ -154,3 +158,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
