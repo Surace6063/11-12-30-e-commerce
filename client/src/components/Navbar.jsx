@@ -2,6 +2,7 @@ import { RiMenu3Line } from "react-icons/ri";
 import { CiShoppingCart } from "react-icons/ci";
 import MaxWidthContainer from "./MaxWidthContainer";
 import Button from "./ui/Button";
+import SearchBar from "./SearchBar";
 
 const Navbar = () => {
   return (
@@ -19,7 +20,9 @@ const Navbar = () => {
               Shop<span className="text-primary">Flow</span>
             </div>
           </div>
-          <div className="hidden md:block">search bar</div>
+          <div className="hidden md:block">
+            <SearchBar />
+          </div>
         </div>
 
         {/* right */}
