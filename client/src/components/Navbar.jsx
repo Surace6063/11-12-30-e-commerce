@@ -3,6 +3,7 @@ import { CiShoppingCart } from "react-icons/ci";
 import MaxWidthContainer from "./MaxWidthContainer";
 import Button from "./ui/Button";
 import SearchBar from "./SearchBar";
+import {Link} from "react-router-dom"
 
 const Navbar = () => {
   return (
@@ -14,12 +15,12 @@ const Navbar = () => {
             <RiMenu3Line size={25} />
           </span>
           {/* logo */}
-          <div className="flex items-center gap-0.5">
+          <Link to='/' className="flex items-center gap-0.5">
             <img src="logo.png" alt="logo" className="size-8 md:size-10" />
             <div className="text-xl font-bold text-gray-800">
               Shop<span className="text-primary">Flow</span>
             </div>
-          </div>
+          </Link>
           <div className="hidden md:block">
             <SearchBar />
           </div>
