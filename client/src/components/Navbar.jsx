@@ -7,7 +7,7 @@ import {Link} from "react-router-dom"
 
 const Navbar = () => {
   return (
-    <div className="border-b border-gray-300 py-4">
+    <div className="border-b border-gray-300 py-4 sticky top-0 bg-white z-100">
       <MaxWidthContainer className="flex justify-between items-center">
         {/* left */}
         <div className="flex items-center gap-4">
