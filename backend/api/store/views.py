@@ -29,7 +29,6 @@ class ProductListCreateView(generics.ListCreateAPIView):
     
     filter_backends = [DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
     
-    filterset_fields = ['category__name']  #  http://127.0.0.1:8000/api/products/?category__name=category-name
     search_fields = ['title','description']  #  http://127.0.0.1:8000/api/products/?search=serach_text
     ordering_fields = ['price', 'created_at'] # http://127.0.0.1:8000/api/products/?ordering= created_at or price
     filterset_class = ProductFilter # http://127.0.0.1:8000/api/products/?max_price=&min_price=
