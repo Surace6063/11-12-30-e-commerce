@@ -1,4 +1,4 @@
-import Button from "../components/ui/Button";
+import {Button} from "../components/ui/Button";
 import MaxWidthContainer from "../components/MaxWidthContainer";
 import { Link } from "react-router-dom";
 

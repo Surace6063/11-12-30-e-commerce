@@ -5,16 +5,24 @@ import axios from "axios";
 export const useProducts = ({
     page_size = 10,
     category = "",
-    sort="-created_at"
+    sort="-created_at",
+    minPrice="",
+    maxPrice="",
+    search = "",
+    page = 1
 }) =>
   useQuery({
-    queryKey: ["products",page_size,category,sort],
+    queryKey: ["products",page_size,category,sort,minPrice,maxPrice,search,page],
     queryFn: async () => {
       const response = await axios.get("http://127.0.0.1:8000/api/products/", {
         params: {
           page_size,
           category,
-          ordering: sort
+          ordering: sort,
+          max_price: maxPrice,
+          min_price: minPrice,
+          search,
+          page
         }
       })
       return response.data;
