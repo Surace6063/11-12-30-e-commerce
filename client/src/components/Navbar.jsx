@@ -1,9 +1,11 @@
 import { RiMenu3Line } from "react-icons/ri";
 import { CiShoppingCart } from "react-icons/ci";
 import MaxWidthContainer from "./MaxWidthContainer";
-import Button from "./ui/Button";
 import SearchBar from "./SearchBar";
 import {Link} from "react-router-dom"
+
+import { Button } from "./ui/Button";
+import AuthDialog from "./AuthDialog";
 
 const Navbar = () => {
   return (
@@ -30,9 +32,7 @@ const Navbar = () => {
         <div className="flex gap-6 items-center">
           {/* buttons */}
           <div className="space-x-4">
-            <Button variant="ghost">
-              sign in
-            </Button>
+            <AuthDialog />
             <Button>
               sign up
             </Button>
