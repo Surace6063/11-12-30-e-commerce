@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { apiRequest } from "../libs/apiRequest";
 
 // get products
 export const useProducts = ({
@@ -14,7 +14,7 @@ export const useProducts = ({
   useQuery({
     queryKey: ["products",page_size,category,sort,minPrice,maxPrice,search,page],
     queryFn: async () => {
-      const response = await axios.get("http://127.0.0.1:8000/api/products/", {
+      const response = await apiRequest.get("/products/", {
         params: {
           page_size,
           category,
@@ -25,6 +25,18 @@ export const useProducts = ({
           page
         }
       })
+      return response.data;
+    },
+  });
+
+
+// get single product  
+
+export const useProduct = (id) =>
+  useQuery({
+    queryKey: ["product",id],
+    queryFn: async () => {
+      const response = await apiRequest.get(`/products/${id}/`)
       return response.data;
     },
   });
