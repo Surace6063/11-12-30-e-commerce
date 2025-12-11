@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom"
 import HomePage from "./pages/HomePage"
 import MainLayout from "./layout/MainLayout"
 import ProductPage from "./pages/ProductPage"
+import ProductDetailPage from "./pages/ProductDetailPage"
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
       <Route element={<MainLayout />}>
            <Route path="/" element={<HomePage />} />
            <Route path="/products" element={<ProductPage />} />
+           <Route path="/products/:slug/:id" element={<ProductDetailPage />} />
       </Route>
 
     </Routes>
