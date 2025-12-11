@@ -33,9 +33,6 @@ const Navbar = () => {
           {/* buttons */}
           <div className="space-x-4">
             <AuthDialog />
-            <Button>
-              sign up
-            </Button>
           </div>
           <div className="hover:bg-slate-50 cursor-pointer transition">
             <CiShoppingCart size={30} className="text-gray-700" />
