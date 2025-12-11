@@ -8,8 +8,10 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "use-debounce";
-import {Button} from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import cn from "@/libs/cn";
+import ProductSkeleton from "../components/skeleton/ProductSkeleton";
 
 const ProductPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,7 +28,8 @@ const ProductPage = () => {
   const [searchValue, setSearchValue] = useState(
     searchParams.get("search") || ""
   );
-  const [page,setPage] = useState(searchParams.get("page") || 1)
+  const [page, setPage] = useState(searchParams.get("page") || 1);
+  const [toggleFilter, setToggleFilter] = useState(false);
 
   // debounce minPrice
   const [debouncedMinPrice] = useDebounce(minPrice, 500);
@@ -46,15 +49,14 @@ const ProductPage = () => {
     minPrice: debouncedMinPrice,
     maxPrice: debouncedMaxPrice,
     search: searchValue,
-    page
-  })
+    page,
+  });
 
-  
   // when perofrm serach opertaion from product page
   // update new serach value to serachValue state
-  useEffect(()=>{
-    setSearchValue(searchParams.get('search'))
-  },[searchParams,searchValue])
+  useEffect(() => {
+    setSearchValue(searchParams.get("search"));
+  }, [searchParams, searchValue]);
 
   // automatically set query params to url when change in filter state occurs
   useEffect(() => {
@@ -65,29 +67,46 @@ const ProductPage = () => {
     if (minPrice) params.min_price = minPrice;
     if (maxPrice) params.max_price = maxPrice;
     if (searchValue) params.search = searchValue;
-    if(page) params.page = page
+    if (page) params.page = page;
     setSearchParams(params);
-  }, [searchParams, category, selectedSort, minPrice, maxPrice, searchValue,page]);
+  }, [
+    searchParams,
+    category,
+    selectedSort,
+    minPrice,
+    maxPrice,
+    searchValue,
+    page,
+  ]);
 
-const handleNext = () => {
-  if (products && page < products.total_pages) {
-    setPage((prev) => Number(prev) + 1);
-  }
-};
+  const handleNext = () => {
+    if (products && page < products.total_pages) {
+      setPage((prev) => Number(prev) + 1);
+    }
+  };
 
-const handlePrev = () => {
-  if (products && page > 1) {
-    setPage((prev) => Number(prev) - 1);
-  }
-};
+  const handlePrev = () => {
+    if (products && page > 1) {
+      setPage((prev) => Number(prev) - 1);
+    }
+  };
 
   return (
     <MaxWidthContainer className="my-16">
-      <div className="flex gap-10">
+      <div className="flex flex-col lg:flex-row gap-10">
+        <Button
+          onClick={() => setToggleFilter(!toggleFilter)}
+          variant="outline"
+          className="lg:hidden"
+        >
+          filters
+        </Button>
         {/* filter */}
         <div
-          className="border border-gray-200 shadow-sm rounded-xl 
-          basis-[25%] h-fit p-4"
+          className={cn(
+            "border border-gray-200 shadow-sm rounded-xl basis-[25%] h-fit p-4 lg:sticky lg:top-24",
+            toggleFilter ? "block" : "hidden lg:block"
+          )}
         >
           <h1 className="text-gray-800 font-semibold mb-4 text-2xl">Filters</h1>
 
@@ -134,11 +153,12 @@ const handlePrev = () => {
 
             {/* pagination */}
             <div className="flex gap-3 items-center">
-              <Button onClick={handlePrev}  variant="outline" size="icon">
+              <Button onClick={handlePrev} variant="outline" size="icon">
                 <ChevronLeft />
               </Button>
               <div className="font-medium text-gray-600">
-                <span>{products?.current_page}</span>/<span>{products?.total_pages}</span>
+                <span>{products?.current_page}</span>/
+                <span>{products?.total_pages}</span>
               </div>
               <Button onClick={handleNext} variant="outline" size="icon">
                 <ChevronRight />
@@ -152,7 +172,11 @@ const handlePrev = () => {
           {/* products */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {isLoading ? (
-              "loading..."
+              <>
+                {[...Array(10)].map((_, index) => (
+                  <ProductSkeleton key={index} />
+                ))}
+              </>
             ) : isError ? (
               <p>{error.message}</p>
             ) : products.results.length === 0 ? (
