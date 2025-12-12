@@ -27,7 +27,7 @@ const AuthDialog = () => {
           </DialogTitle>
         </DialogHeader>
         {/* form */}
-        {toogleForm === "sign-in" ? <SignInForm /> : <SignUpForm />}
+        {toogleForm === "sign-in" ? <SignInForm /> : <SignUpForm setToggleForm={setToggleForm} />}
 
         <div className="text-center mt-4 text-sm font-semibold text-gray-600">
           {toogleForm === "sign-in" ? (

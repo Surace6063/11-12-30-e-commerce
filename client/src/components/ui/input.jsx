@@ -1,7 +1,7 @@
 import cn from "../../libs/cn";
 import * as LabelPrimitive from "@radix-ui/react-label"
 
-function Input({ className, type, label="", id="",  ...props }) {
+function Input({ className, type, label="", id="", error="",  ...props }) {
   return (
     <>
     {
@@ -28,6 +28,9 @@ function Input({ className, type, label="", id="",  ...props }) {
         )}
         {...props}
       />
+      {
+        error && <p className="text-red-500 text-sm mt-0.5">{error}</p>
+      }
     </>
   );
 }

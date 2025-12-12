@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { FaGoogle } from "react-icons/fa"
 
 const SignInForm = () => {
   return (
@@ -11,6 +12,7 @@ const SignInForm = () => {
       <Button className="w-full">
         sign in
       </Button>
+
     </form>
   )
 }

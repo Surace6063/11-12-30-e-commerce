@@ -3,10 +3,12 @@ import HomePage from "./pages/HomePage"
 import MainLayout from "./layout/MainLayout"
 import ProductPage from "./pages/ProductPage"
 import ProductDetailPage from "./pages/ProductDetailPage"
+import {Toaster} from "react-hot-toast"
 
 const App = () => {
   return (
    <>
+   <Toaster />
     <Routes>
       {/* main layout */}
       <Route element={<MainLayout />}>
