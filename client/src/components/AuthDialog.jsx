@@ -11,9 +11,11 @@ import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 
 const AuthDialog = () => {
-  const [toogleForm, setToggleForm] = useState("sign-in");
+  const [toogleForm, setToggleForm] = useState("sign-in")
+  const [open,setOpen] = useState(false)
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost">
           {toogleForm === "sign-in" ? "sign in" : "sign up"}
@@ -27,7 +29,7 @@ const AuthDialog = () => {
           </DialogTitle>
         </DialogHeader>
         {/* form */}
-        {toogleForm === "sign-in" ? <SignInForm /> : <SignUpForm setToggleForm={setToggleForm} />}
+        {toogleForm === "sign-in" ? <SignInForm setOpen={setOpen} /> : <SignUpForm setToggleForm={setToggleForm} />}
 
         <div className="text-center mt-4 text-sm font-semibold text-gray-600">
           {toogleForm === "sign-in" ? (
