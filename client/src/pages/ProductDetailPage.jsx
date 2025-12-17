@@ -4,15 +4,18 @@ import { Minus, Plus, ShoppingCart } from "lucide-react";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
 import { useParams } from "react-router-dom";
 import { useProduct } from "../api/product-services";
+import { useAddToCart } from "../api/cart-services";
+import toast  from "react-hot-toast";
 
 const ProductDetailPage = () => {
-    const {id} = useParams()
-    const [qty, setQty] = useState(1);
+  const { id } = useParams();
+  const [qty, setQty] = useState(1);
 
-  
-    // fetching single product data
-    const {data:product,isLoading,isError,error} = useProduct(id)
+  // fetching single product data
+  const { data: product, isLoading, isError, error } = useProduct(id);
 
+  // add to cart
+  const { mutate, isPending } = useAddToCart();
 
   const handleIncrease = () => {
     if (qty < product.stock) setQty(qty + 1);
@@ -22,8 +25,24 @@ const ProductDetailPage = () => {
     if (qty > 1) setQty(qty - 1);
   };
 
-  if(isLoading) return <p>loading...</p>
-  if(isError) return <p>{error.message}</p>
+  // handle add to cart
+  const handleAddToCart = () => {
+    if (id && qty) {
+      const payload = {
+        product: parseInt(id),
+        quantity: qty,
+      };
+
+      mutate(payload, {
+        onSuccess: () => {
+          toast.success("Items added to cart sucessfully.");
+        },
+      });
+    }
+  };
+
+  if (isLoading) return <p>loading...</p>;
+  if (isError) return <p>{error.message}</p>;
 
   return (
     <MaxWidthContainer className="my-8 md:my-10 lg:my-16">
@@ -72,7 +91,10 @@ const ProductDetailPage = () => {
               <Plus size={18} />
             </Button>
 
-            <Button className="flex items-center gap-2">
+            <Button
+              onClick={handleAddToCart}
+              className="flex items-center gap-2"
+            >
               <ShoppingCart size={18} />
               Add to Cart
             </Button>
