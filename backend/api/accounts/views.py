@@ -1,10 +1,17 @@
 from rest_framework import generics
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, LoginSerializer
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 # register view
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny] # allow any user to register
+    
+# login view
+class LoginView(TokenObtainPairView):
+    serializer_class =  LoginSerializer
+    permission_classes = [AllowAny]  
