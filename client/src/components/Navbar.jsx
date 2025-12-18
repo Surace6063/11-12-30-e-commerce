@@ -1,4 +1,3 @@
-import { RiMenu3Line } from "react-icons/ri";
 import { CiShoppingCart } from "react-icons/ci";
 import MaxWidthContainer from "./MaxWidthContainer";
 import SearchBar from "./SearchBar";
@@ -42,9 +41,9 @@ const Navbar = () => {
               <AuthDialog />
             )}
           </div>
-          <div className="hover:bg-slate-50 cursor-pointer transition">
+          <Link to="/carts" className="hover:bg-slate-50 cursor-pointer transition">
             <CiShoppingCart size={30} className="text-gray-700" />
-          </div>
+          </Link>
         </div>
       </MaxWidthContainer>
     </div>
