@@ -3,11 +3,38 @@ from .models import Cart, CartItem
 
 # cart item serializer
 class CartItemSerializer(serializers.ModelSerializer):
-    total = serializers.ReadOnlyField() # cannot perform write operation
-    
+    product_title = serializers.CharField(
+        source='product.title',
+        read_only=True
+    )
+    product_price = serializers.DecimalField(
+        source='product.price',
+        max_digits=10,
+        decimal_places=2,
+        read_only=True
+    )
+    product_image = serializers.ImageField(
+        source='product.image',
+        read_only=True
+    )
+    product_category = serializers.CharField(
+        source='product.category.name',
+        read_only=True
+    )
+    total = serializers.ReadOnlyField()
+
     class Meta:
         model = CartItem
-        fields = ['id','product','quantity','total']
+        fields = [
+            'id',
+            'product',          # for WRITE (product ID)
+            'product_title',
+            'product_price',
+            'product_image',
+            'product_category',
+            'quantity',
+            'total'
+        ]
         
       
 
