@@ -4,6 +4,7 @@ import MainLayout from "./layout/MainLayout"
 import ProductPage from "./pages/ProductPage"
 import ProductDetailPage from "./pages/ProductDetailPage"
 import {Toaster} from "react-hot-toast"
+import CartPage from "./pages/CartPage"
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
            <Route path="/" element={<HomePage />} />
            <Route path="/products" element={<ProductPage />} />
            <Route path="/products/:slug/:id" element={<ProductDetailPage />} />
+           <Route path="/carts" element={<CartPage />} />
       </Route>
 
     </Routes>
