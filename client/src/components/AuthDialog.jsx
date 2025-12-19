@@ -17,7 +17,7 @@ const AuthDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button variant="secondary">
           {toogleForm === "sign-in" ? "sign in" : "sign up"}
         </Button>
         {/* <Button>sign up</Button> */}
