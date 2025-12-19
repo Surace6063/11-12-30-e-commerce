@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { useProduct } from "../api/product-services";
 import { useAddToCart } from "../api/cart-services";
 import toast  from "react-hot-toast";
+import ProductDetailSkeleton from "../components/skeleton/ProductDetailSkeleton";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -41,7 +42,7 @@ const ProductDetailPage = () => {
     }
   };
 
-  if (isLoading) return <p>loading...</p>;
+  if (isLoading) return <ProductDetailSkeleton />
   if (isError) return <p>{error.message}</p>;
 
   return (
