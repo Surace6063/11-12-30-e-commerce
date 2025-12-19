@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { X, Minus, Plus } from "lucide-react";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
-import { useCarts } from "../api/cart-services";
+import { useCarts, useRemoveFromCart } from "../api/cart-services";
 import useAuthStore from "../zustand/useAuthStore";
 import {
   Empty,
@@ -10,31 +10,30 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/empty"
+} from "@/components/ui/empty";
 import AuthDialog from "../components/AuthDialog";
+import { MdOutlinePersonOff,  MdRemoveShoppingCart } from "react-icons/md";
+import toast from "react-hot-toast";
+import {useNavigate} from "react-router-dom"
+import CartPageSkeleton from "../components/skeleton/CartPageSkeleton";
+import EmptyAuthState from "../components/empty/EmptyAuthState";
+import CartEmptyState from "../components/empty/CartEmptyState";
 
 const CartPage = () => {
+  const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore();
-  const { data: cart, isLoading, isError, error } = useCarts();
+  const { data: cart, isLoading, isError, error } = useCarts()
+  console.log(cart)
 
-  if (!isAuthenticated) return <Empty>
-  <EmptyHeader>
-    <EmptyMedia variant="icon">
-      <Plus />
-    </EmptyMedia>
-    <EmptyTitle>Please log in</EmptyTitle>
-    <EmptyDescription>
-      You need to be logged in to view your cart and continue shopping.
-    </EmptyDescription>
-  </EmptyHeader>
+  // remove from cart
+  const { mutate } = useRemoveFromCart();
 
-  <EmptyContent>
-    <AuthDialog />
-  </EmptyContent>
-</Empty>
+  if (!isAuthenticated) return <EmptyAuthState /> 
 
-  if (isLoading) return <p>loading...</p>;
+  if (isLoading) return <CartPageSkeleton />
   if (isError) return <p>{error.message}</p>;
+
+  if (!cart || cart.items.length === 0) return <CartEmptyState />
 
   // Default cart UI
   return (
@@ -98,6 +97,12 @@ const CartPage = () => {
                       variant="ghost"
                       size="icon"
                       className="text-zinc-400 hover:text-zinc-700"
+                      onClick={() =>
+                        mutate(item.id, {
+                          onSuccess: () =>
+                            toast.success("Item removed from cart."),
+                        })
+                      }
                     >
                       <X className="w-5 h-5" />
                     </Button>
