@@ -44,8 +44,9 @@ class CartSerializer(serializers.ModelSerializer):
     # show all cart items using CartItemSerializer
     items = CartItemSerializer(many=True,read_only=True)
     total = serializers.ReadOnlyField()
+    total_quantity = serializers.ReadOnlyField()
     
     class Meta:
         model = Cart
-        fields = ['id','items','total','created_at']
+        fields = ['id','items','total','total_quantity','created_at']
         

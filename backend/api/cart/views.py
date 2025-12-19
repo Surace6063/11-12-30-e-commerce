@@ -29,7 +29,6 @@ class AddToCartView(generics.CreateAPIView):
         
 
 
-
 # get cart detail
 class CartDetailView(generics.RetrieveAPIView):
     queryset = Cart.objects.all()
@@ -40,3 +39,14 @@ class CartDetailView(generics.RetrieveAPIView):
         # get or create cart for current loggedIn user
         cart, _ = Cart.objects.get_or_create(user=self.request.user)
         return cart
+
+# remove item from cart
+class RemoveCartItemView(generics.DestroyAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+    permission_classes = [IsAuthenticated]
+    
+    # only user can delete user's cart item
+    def get_queryset(self):
+        return CartItem.objects.filter(cart__user=self.request.user)
+    

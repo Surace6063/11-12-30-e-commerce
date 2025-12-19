@@ -11,6 +11,11 @@ class Cart(models.Model):
     @property 
     def total(self):
         return sum(item.total for item in self.items.all())
+    
+    # method to calculate total quantity 
+    @property 
+    def total_quantity(self):
+        return sum(item.quantity for item in self.items.all())
             
     
     def __str__(self):
