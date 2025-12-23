@@ -5,14 +5,15 @@ import {
 } from "@/components/ui/popover";
 import useAuthStore from "../zustand/useAuthStore";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const ProfileMenu = () => {
-  const { user, logout } = useAuthStore()
+  const { user, logout } = useAuthStore();
 
   const handleLogout = () => {
-    logout()
-    toast.success("You loggedout sucessfully.")
-  }
+    logout();
+    toast.success("You loggedout sucessfully.");
+  };
 
   return (
     <Popover>
@@ -37,11 +38,17 @@ const ProfileMenu = () => {
             orders
           </li>
           {user?.is_admin && (
-            <li className="text-gray-700 font-medium cursor-pointer py-1 text-center w-full rounded-md hover:bg-slate-50 transition">
-              dashboard
-            </li>
+            <Link
+              className="text-gray-700 font-medium cursor-pointer py-1 text-center w-full rounded-md hover:bg-slate-50 transition"
+              to="/dashboard/main"
+            >
+              <li>dashboard</li>
+            </Link>
           )}
-          <li onClick={handleLogout} className="text-gray-700 font-medium cursor-pointer py-1 text-center w-full rounded-md hover:bg-slate-50 transition">
+          <li
+            onClick={handleLogout}
+            className="text-gray-700 font-medium cursor-pointer py-1 text-center w-full rounded-md hover:bg-slate-50 transition"
+          >
             logout
           </li>
         </ul>
