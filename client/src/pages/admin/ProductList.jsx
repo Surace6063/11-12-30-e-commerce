@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/api/product-services";
+import ProductFormDialog from "../../components/admin/ProductFormDialog";
 
 const ProductList = () => {
   // fetching product list
@@ -37,10 +38,7 @@ const ProductList = () => {
         </div>
 
         {/* Add Button */}
-        <Button className="rounded-xl gap-2 bg-slate-800 text-white hover:bg-slate-700 transition">
-          <Plus className="h-4 w-4" />
-          Add Product
-        </Button>
+        <ProductFormDialog />
       </div>
 
       {/* Table */}

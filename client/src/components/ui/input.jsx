@@ -1,9 +1,9 @@
-import cn from "../../libs/cn";
+import cn from "@/libs/cn";
 import * as LabelPrimitive from "@radix-ui/react-label"
 
 function Input({ className, type, label="", id="", error="",  ...props }) {
   return (
-    <>
+    <div className="space-y-4">
     {
       label &&   <LabelPrimitive.Root
       data-slot="label"
@@ -33,7 +33,7 @@ function Input({ className, type, label="", id="", error="",  ...props }) {
       {
         error && <p className="text-destructive text-sm">{error}</p>
       }
-    </>
+    </div>
   );
 }
 
