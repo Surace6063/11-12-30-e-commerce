@@ -1,4 +1,4 @@
-import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { format } from 'date-fns'
 
 import {
@@ -14,10 +14,25 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCategories } from "@/api/category-services";
 import CategoryFormDialog from "../../components/admin/CategoryFormDialog";
+import { useDeleteCategory } from "../../api/category-services";
+import toast from "react-hot-toast"
+import { Spinner } from "@/components/ui/spinner"
+import CategoryUpdateFromDialog from "../../components/admin/CategoryUpdateFromDialog";
 
 const CategoryList = () => {
   // fetching category list
   const { data: categories, isLoading, isError, error } = useCategories();
+
+  // muatation function to call delete request of category
+  const {mutate,isPending} = useDeleteCategory()
+
+  // handle delete category
+  const handleDeleteCategory = (id) => {
+    mutate(id,{
+      onSuccess: () => toast.success("Category deleted sucessfully.")
+    })
+  }
+
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-6">
@@ -66,11 +81,11 @@ const CategoryList = () => {
                 <TableCell>{cat.name}</TableCell>
                 <TableCell>{format(cat.created_at,'yyyy-MM-dd')}</TableCell>
                 <TableCell className="text-right flex justify-end gap-2">
-                  <Button variant="secondary">
-                    <Edit className="h-4 w-4 text-sky-600" />
-                  </Button>
-                  <Button variant="secondary">
-                    <Trash2 className="h-4 w-4 text-destructive" />
+                  <CategoryUpdateFromDialog category={cat} />
+                  <Button onClick={()=>handleDeleteCategory(cat.id)} variant="secondary" disbaled={isPending}>
+                   {
+                    isPending ? <Spinner /> :  <Trash2 className="h-4 w-4 text-destructive" />
+                   }
                   </Button>
                 </TableCell>
               </TableRow>

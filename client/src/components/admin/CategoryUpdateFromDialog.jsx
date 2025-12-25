@@ -9,13 +9,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { Edit } from "lucide-react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
-import { useAddCategory } from "../../api/category-services";
-import { Spinner } from "@/components/ui/spinner"
+import { useUpdateCategory } from "../../api/category-services";
+import { Spinner } from "@/components/ui/spinner";
 
 const CategoryFormValidationSchema = yup.object({
   name: yup
@@ -25,7 +25,7 @@ const CategoryFormValidationSchema = yup.object({
     .max(100, "Category name must be less than 100 characters long"),
 });
 
-const CategoryFormDialog = () => {
+const CategoryUpdateFromDialog = ({ category }) => {
   const {
     register,
     handleSubmit,
@@ -33,32 +33,40 @@ const CategoryFormDialog = () => {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(CategoryFormValidationSchema),
+    defaultValues: {
+      name: category?.name || "",
+    },
   });
 
   // muatation function to send category form data to server
-  const { mutate, isPending } = useAddCategory();
+  const { mutate, isPending } = useUpdateCategory();
 
   // handle form submit
-  const handleAddCategory = (data) =>
-    mutate(data, {
-      onSuccess: () => {
-        toast.success("Category added sucessfully.")
-        reset()
-      },
-    })
+  const handleUpdateCategory = (data) => {
+    if (category && category.id) {
+      mutate(
+        { id: category.id, data },
+        {
+          onSuccess: () => {
+            toast.success("Category updated sucessfully.");
+            reset();
+          },
+        }
+      );
+    }
+  };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="rounded-xl gap-2 bg-slate-800 text-white hover:bg-slate-700 transition">
-          <Plus className="h-4 w-4" />
-          Add Category
+        <Button variant="secondary">
+          <Edit className="h-4 w-4 text-sky-600" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={handleSubmit(handleAddCategory)}>
+        <form onSubmit={handleSubmit(handleUpdateCategory)}>
           <DialogHeader className="mb-6">
-            <DialogTitle>Add Category</DialogTitle>
+            <DialogTitle>Update Category</DialogTitle>
           </DialogHeader>
           <Input
             {...register("name")}
@@ -73,12 +81,14 @@ const CategoryFormDialog = () => {
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button type="submit" disabled={isPending}>
-              {
-                isPending ? <>
-                <Spinner />
-                adding...
-                </> : "Add"
-              }
+              {isPending ? (
+                <>
+                  <Spinner />
+                  updating...
+                </>
+              ) : (
+                "Update"
+              )}
             </Button>
           </DialogFooter>
         </form>
@@ -86,4 +96,4 @@ const CategoryFormDialog = () => {
     </Dialog>
   );
 };
-export default CategoryFormDialog;
+export default CategoryUpdateFromDialog;
