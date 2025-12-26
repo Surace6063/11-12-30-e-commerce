@@ -8,19 +8,56 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter
 } from "@/components/ui/table";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/api/product-services";
 import ProductFormDialog from "../../components/admin/ProductFormDialog";
+import { useState, useEffect } from "react";
+import Pagination from "../../components/Pagination";
+import { useDebounce } from "use-debounce";
+
+const PAGE_SIZE = 5
 
 const ProductList = () => {
+  const [page, setPage] = useState(1)
+  const [totalPage,setTotalPage] = useState(1)
+  const [serachValue,setSearchValue] = useState("")
+
+    const [debouncedSearchValue] = useDebounce(serachValue,500)
+
   // fetching product list
   const { data: products, isLoading, isError, error } = useProducts({
-    page : 1,
-    page_size : 5
+    page,
+    page_size : PAGE_SIZE,
+    search: debouncedSearchValue
   });
+
+
+
+   // set total_page to totalPage state
+  // only update totalPage state if api total_pages updated
+    useEffect(()=>{
+      if(products?.total_pages) setTotalPage(products.total_pages)
+    },[products?.total_pages])
+
+
+  const handleNext = () => {
+    if (products && page < products.total_pages) {
+      setPage((prev) => Number(prev) + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (products && page > 1) {
+      setPage((prev) => Number(prev) - 1);
+    }
+  };
+
+
+  
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-6">
@@ -34,6 +71,7 @@ const ProductList = () => {
           <Input
             placeholder="Search products..."
             className="pl-9 rounded-xl"
+            onChange={e => setSearchValue(e.target.value)}
           />
         </div>
 
@@ -90,6 +128,15 @@ const ProductList = () => {
             ))
           )}
         </TableBody>
+        <TableFooter className="border-border">
+          <TableRow>
+            <TableCell colspan="8">
+             <div className="flex justify-center">
+                <Pagination handleNext={handleNext} handlePrev={handlePrev} current_page={page} total_pages={totalPage} next={products?.next} prev={products?.previous} />
+             </div>
+            </TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
     </div>
   );
