@@ -8,7 +8,7 @@ const AdminLayout = () => {
         <AdminSideBar />
         <main className="w-full bg-sidebar py-6">
            
-           <div className="border border-border mx-4 bg-white h-[90vh] rounded-md shadow-xs p-6 space-y-4">
+           <div className="border border-border mx-4 bg-white min-h-[90vh] rounded-md shadow-xs p-6 space-y-4">
              <SidebarTrigger />
             <Outlet />
            </div>
