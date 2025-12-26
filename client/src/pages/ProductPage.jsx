@@ -9,9 +9,9 @@ import { useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "use-debounce";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import cn from "@/libs/cn";
 import ProductSkeleton from "../components/skeleton/ProductSkeleton";
+import Pagination from "../components/Pagination";
 
 const ProductPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,6 +29,7 @@ const ProductPage = () => {
     searchParams.get("search") || ""
   );
   const [page, setPage] = useState(searchParams.get("page") || 1);
+  const [totalPage,setTotalPage] = useState(1)
   const [toggleFilter, setToggleFilter] = useState(false);
 
   // debounce minPrice
@@ -51,6 +52,13 @@ const ProductPage = () => {
     search: searchValue,
     page,
   });
+
+
+  // set total_page to totalPage state
+  // only update totalPage state if api total_pages updated
+  useEffect(()=>{
+    if(products?.total_pages) setTotalPage(products.total_pages)
+  },[products?.total_pages])
 
   // when perofrm serach opertaion from product page
   // update new serach value to serachValue state
@@ -152,18 +160,7 @@ const ProductPage = () => {
             <h1 className="text-gray-800 text-xl font-semibold">Products</h1>
 
             {/* pagination */}
-            <div className="flex gap-3 items-center">
-              <Button onClick={handlePrev} variant="outline" size="icon">
-                <ChevronLeft />
-              </Button>
-              <div className="font-medium text-gray-600">
-                <span>{products?.current_page}</span>/
-                <span>{products?.total_pages}</span>
-              </div>
-              <Button onClick={handleNext} variant="outline" size="icon">
-                <ChevronRight />
-              </Button>
-            </div>
+            <Pagination handleNext={handleNext} handlePrev={handlePrev} current_page={page} total_pages={totalPage} next={products?.next} prev={products?.previous} />
           </div>
 
           {/* divider */}
