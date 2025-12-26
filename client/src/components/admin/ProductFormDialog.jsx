@@ -18,35 +18,68 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
-import cn from "@/libs/cn"
+import cn from "@/libs/cn";
+import { useCategories } from "@/api/category-services";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import toast from "react-hot-toast";
+import { Spinner } from "@/components/ui/spinner";
+import { productFormValidationSchema } from "../../validation/product-validation";
 
 const ProductFormDialog = () => {
+  // fetching catagoeries
+  const { data: categories } = useCategories();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(productFormValidationSchema),
+  });
+
+  const handleProductSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button className="rounded-xl gap-2 bg-slate-800 text-white hover:bg-slate-700 transition">
-            <Plus className="h-4 w-4" />
-            Add Product
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[600px]">
+      <DialogTrigger asChild>
+        <Button className="rounded-xl gap-2 bg-slate-800 text-white hover:bg-slate-700 transition">
+          <Plus className="h-4 w-4" />
+          Add Product
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[600px]">
+        <form
+          onSubmit={handleSubmit(handleProductSubmit)}
+          className="space-y-4"
+        >
           <DialogHeader className="mb-6">
             <DialogTitle>Add Product</DialogTitle>
           </DialogHeader>
 
           {/* Category select */}
-          <label   className={cn(
-            "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
-          )} htmlFor="category">Category</label>
-          <Select>
+          <label
+            className={cn(
+              "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+            )}
+            htmlFor="category"
+          >
+            Category
+          </label>
+          <Select {...register("category")}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="shoes">Shoes</SelectItem>
-              <SelectItem value="cloths">cloths</SelectItem>
-              <SelectItem value="electronics">electronics</SelectItem>
+              {categories?.map((cat) => (
+                <SelectItem key={cat.id} value={String(cat.id)}>
+                  {cat.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -57,6 +90,8 @@ const ProductFormDialog = () => {
             label="Title"
             id="title"
             className="mb-4"
+            {...register("title")}
+            error={errors?.title?.message}
           />
 
           {/* Description */}
@@ -65,6 +100,8 @@ const ProductFormDialog = () => {
             id="description"
             className="mb-4"
             label="Description"
+            {...register("description")}
+            error={errors?.description?.message}
           />
 
           <div className="grid grid-cols-2 gap-3">
@@ -75,6 +112,8 @@ const ProductFormDialog = () => {
               label="Price"
               id="price"
               className="mb-4"
+              {...register("price")}
+              error={errors?.price?.message}
             />
 
             {/* Stock */}
@@ -84,6 +123,8 @@ const ProductFormDialog = () => {
               label="Stock"
               id="stock"
               className="mb-4"
+              {...register("stock")}
+              error={errors?.stock?.message}
             />
           </div>
 
@@ -94,6 +135,8 @@ const ProductFormDialog = () => {
             accept="image/*"
             className="mb-4"
             label="Image"
+            {...register("image")}
+            error={errors?.image?.message}
           />
 
           <DialogFooter>
@@ -102,8 +145,8 @@ const ProductFormDialog = () => {
             </DialogClose>
             <Button type="submit">Add</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 };
