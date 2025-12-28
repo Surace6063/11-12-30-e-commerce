@@ -18,6 +18,8 @@ import ProductFormDialog from "../../components/admin/ProductFormDialog";
 import { useState, useEffect } from "react";
 import Pagination from "../../components/Pagination";
 import { useDebounce } from "use-debounce";
+import { useDeleteProduct } from "../../api/product-services";
+import toast from "react-hot-toast";
 
 const PAGE_SIZE = 5
 
@@ -26,7 +28,7 @@ const ProductList = () => {
   const [totalPage,setTotalPage] = useState(1)
   const [serachValue,setSearchValue] = useState("")
 
-    const [debouncedSearchValue] = useDebounce(serachValue,500)
+  const [debouncedSearchValue] = useDebounce(serachValue,500)
 
   // fetching product list
   const { data: products, isLoading, isError, error } = useProducts({
@@ -56,8 +58,15 @@ const ProductList = () => {
     }
   };
 
+  // mutation function to delete product
+  const {mutate} = useDeleteProduct()
 
-  
+  const handleDeleteProduct = (id) => {
+    mutate(id,{
+      onSuccess: () => toast.success("Product deleted sucessfully.")
+    })
+  }
+
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-6">
@@ -120,7 +129,7 @@ const ProductList = () => {
                   <Button variant="secondary">
                     <Edit className="h-4 w-4 text-sky-600" />
                   </Button>
-                  <Button variant="secondary">
+                  <Button onClick={()=>handleDeleteProduct(item.id)} variant="secondary">
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </TableCell>
