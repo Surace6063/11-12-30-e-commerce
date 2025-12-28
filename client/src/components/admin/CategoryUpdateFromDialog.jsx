@@ -16,6 +16,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
 import { useUpdateCategory } from "../../api/category-services";
 import { Spinner } from "@/components/ui/spinner";
+import { useEffect, useState } from "react";
 
 const CategoryFormValidationSchema = yup.object({
   name: yup
@@ -26,17 +27,20 @@ const CategoryFormValidationSchema = yup.object({
 });
 
 const CategoryUpdateFromDialog = ({ category }) => {
+  const [open,setOpen] = useState(false)
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(CategoryFormValidationSchema),
-    defaultValues: {
-      name: category?.name || "",
-    },
   });
+
+  useEffect(()=>{
+    if(category && category.name) setValue("name",category.name)
+  },[category?.name])
 
   // muatation function to send category form data to server
   const { mutate, isPending } = useUpdateCategory();
@@ -50,6 +54,7 @@ const CategoryUpdateFromDialog = ({ category }) => {
           onSuccess: () => {
             toast.success("Category updated sucessfully.");
             reset();
+            setOpen(false)
           },
         }
       );
@@ -57,7 +62,7 @@ const CategoryUpdateFromDialog = ({ category }) => {
   };
 
   return (
-    <Dialog>
+    <Dialog  open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="secondary">
           <Edit className="h-4 w-4 text-sky-600" />
