@@ -3,16 +3,6 @@ import { X, Minus, Plus } from "lucide-react";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
 import { useCarts, useRemoveFromCart } from "../api/cart-services";
 import useAuthStore from "../zustand/useAuthStore";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
-import AuthDialog from "../components/AuthDialog";
-import { MdOutlinePersonOff,  MdRemoveShoppingCart } from "react-icons/md";
 import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom"
 import CartPageSkeleton from "../components/skeleton/CartPageSkeleton";
@@ -139,7 +129,7 @@ const CartPage = () => {
             <span>${cart?.total}</span>
           </div>
 
-          <Button className="w-full mt-6 rounded-xl bg-zinc-900 hover:bg-zinc-800">
+          <Button onClick={()=>navigate('/checkout')} className="w-full mt-6 rounded-xl bg-zinc-900 hover:bg-zinc-800">
             Checkout
           </Button>
         </div>

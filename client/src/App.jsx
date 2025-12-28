@@ -11,6 +11,7 @@ import CategoryList from "./pages/admin/CategoryList"
 import Main from "./pages/admin/Main"
 import UserList from "./pages/admin/UserList"
 import OrderList from "./pages/admin/OrderList"
+import Checkout from "./pages/Checkout"
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
            <Route path="/products" element={<ProductPage />} />
            <Route path="/products/:slug/:id" element={<ProductDetailPage />} />
            <Route path="/carts" element={<CartPage />} />
+          
       </Route>
 
       {/* admin layout */}
@@ -33,6 +35,8 @@ const App = () => {
         <Route path="users" element={<UserList />} />
         <Route path="orders" element={<OrderList />} />
       </Route>
+
+       <Route path="/checkout" element={<Checkout />} />
 
     </Routes>
    </>
