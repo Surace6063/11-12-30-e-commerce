@@ -22,7 +22,7 @@ export const productFormValidationSchema = yup.object({
   image: yup
     .mixed()
     .required("Image is required")
-    .test("fileType", "Only image files allowed", (file) =>
-      file?.type?.startsWith("image/")
-    ),
+    // .test("fileType", "Only image files allowed", (file) =>
+    //   file?.type?.startsWith("image/")
+    // ),
 });

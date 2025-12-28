@@ -8,26 +8,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import cn from "@/libs/cn";
 import { useCategories } from "@/api/category-services";
-import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
 import { Spinner } from "@/components/ui/spinner";
 import { productFormValidationSchema } from "../../validation/product-validation";
+import { useState } from "react";
+import { useAddProduct } from "../../api/product-services";
 
 const ProductFormDialog = () => {
+  // image preview state
+  const [imagePreview, setImagePreview] = useState(null);
+  const [open,setOpen] = useState(false)
+
+  const handleImagePreview = (e) => {
+    const imageFile = e.target.files[0];
+    const objectUrl = URL.createObjectURL(imageFile);
+    setImagePreview(objectUrl);
+  };
+
   // fetching catagoeries
   const { data: categories } = useCategories();
 
@@ -38,21 +42,42 @@ const ProductFormDialog = () => {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(productFormValidationSchema),
-  });
+  })
+  
+  // mutation function to add new product
+  const {mutate,isPending} = useAddProduct()
 
   const handleProductSubmit = (data) => {
-    console.log(data);
-  };
+    const formData = new FormData()
+    formData.append("title",data.title)
+    formData.append("description",data.description)
+    formData.append("category",data.category)
+    formData.append("price",data.price)
+    formData.append("stock",data.stock)
+
+    if(data.image){
+      formData.append("image", data.image[0])
+    }
+
+    mutate(formData,{
+      onSuccess: () => {
+        toast.success("Product added sucessfully.")
+        reset()
+        setOpen(false)
+        setImagePreview(null)
+      }
+    })
+  }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="rounded-xl gap-2 bg-slate-800 text-white hover:bg-slate-700 transition">
           <Plus className="h-4 w-4" />
           Add Product
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[95vh] overflow-y-auto scrollbar-hide [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <form
           onSubmit={handleSubmit(handleProductSubmit)}
           className="space-y-4"
@@ -70,18 +95,18 @@ const ProductFormDialog = () => {
           >
             Category
           </label>
-          <Select {...register("category")}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories?.map((cat) => (
-                <SelectItem key={cat.id} value={String(cat.id)}>
-                  {cat.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <select
+            className="w-full p-2 rounded-md border border-gray-300"
+            id="category"
+            {...register("category")}
+          >
+            <option value="">Select a category</option>
+            {categories?.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
 
           {/* Title */}
           <Input
@@ -137,13 +162,26 @@ const ProductFormDialog = () => {
             label="Image"
             {...register("image")}
             error={errors?.image?.message}
+            onChange={handleImagePreview}
           />
+
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="preview"
+              className="size-32 rounded-md shadow"
+            />
+          )}
 
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit">Add</Button>
+            <Button type="submit" disabled={isPending}>
+              {
+                isPending ? <><Spinner /> adding...</> : "Add"
+              }
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
