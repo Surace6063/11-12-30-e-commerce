@@ -16,6 +16,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
 import { useAddCategory } from "../../api/category-services";
 import { Spinner } from "@/components/ui/spinner"
+import { useState } from "react";
 
 const CategoryFormValidationSchema = yup.object({
   name: yup
@@ -26,6 +27,8 @@ const CategoryFormValidationSchema = yup.object({
 });
 
 const CategoryFormDialog = () => {
+  const [open,setOpen] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -44,11 +47,12 @@ const CategoryFormDialog = () => {
       onSuccess: () => {
         toast.success("Category added sucessfully.")
         reset()
+        setOpen(false)
       },
     })
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="rounded-xl gap-2 bg-slate-800 text-white hover:bg-slate-700 transition">
           <Plus className="h-4 w-4" />
