@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation,useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "../libs/apiRequest";
 
 // get products
@@ -40,3 +40,38 @@ export const useProduct = (id) =>
       return response.data;
     },
   });
+
+
+// add product  
+export const useAddProduct = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data) => await apiRequest.post('/products/',data),
+    onSuccess: () => queryClient.invalidateQueries(['products']),
+    onError: (error) => console.log(error)
+  })
+}
+
+// delete product
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id) => await apiRequest.delete(`/products/${id}/`),
+    onSuccess: () => queryClient.invalidateQueries(['products']),
+    onError: (error) => console.log(error)
+  })
+}
+
+
+// update product
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({id, data}) => await apiRequest.patch(`/products/${id}/`,data),
+    onSuccess: () => queryClient.invalidateQueries(['products']),
+    onError: (error) => console.log(error)
+  })
+}  
