@@ -13,7 +13,10 @@ urlpatterns = [
     path('api/auth/',include('accounts.urls')),
     
     # cart app urls
-    path('api/carts/',include('cart.urls'))
+    path('api/carts/',include('cart.urls')),
+    
+    # order app urls
+    path('api/orders/', include('orders.urls'))
 ]
 
 
