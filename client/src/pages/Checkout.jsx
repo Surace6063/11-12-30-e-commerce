@@ -3,30 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
 import { ChevronsLeft } from "lucide-react";
-
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-
-/* ================= VALIDATION SCHEMA ================= */
-const checkoutSchema = yup.object({
-  fullName: yup.string().required("Full name is required"),
-  email: yup
-    .string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  phone: yup
-    .string()
-    .required("Phone number is required")
-    .min(10, "Phone number must be at least 10 digits"),
-  companyName: yup.string().nullable(),
-  panVat: yup.string().nullable(),
-  city: yup.string().required("City/District is required"),
-  address: yup.string().required("Address is required"),
-  zipCode: yup.string().nullable(),
-});
+import { checkoutSchema } from "@/validation/checkout-validation";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "@/zustand/useAuthStore";
+import { useCarts } from "@/api/cart-services";
 
 export default function Checkout() {
+  const navigate = useNavigate();
+
+  const { isAuthenticated } = useAuthStore();
+
+  if (!isAuthenticated) return <p>please login in first</p>;
+
+  // fetching cart items
+  const { data: cart, isLoading, isError, error } = useCarts();
+
   const {
     register,
     handleSubmit,
@@ -41,7 +34,11 @@ export default function Checkout() {
 
   return (
     <MaxWidthContainer className="my-6 max-w-6xl">
-      <Button className="mb-6 text-gray-700 font-semibold" variant="ghost">
+      <Button
+        onClick={() => navigate("/carts")}
+        className="mb-6 text-gray-700 font-semibold"
+        variant="ghost"
+      >
         <ChevronsLeft />
         back
       </Button>
@@ -135,61 +132,54 @@ export default function Checkout() {
           {/* ================= RIGHT SIDE ================= */}
           <div>
             <div className="space-y-4 pt-6">
-              <h2 className="font-bold text-xl text-gray-800">
-                Order Summary
-              </h2>
+              <h2 className="font-bold text-xl text-gray-800">Order Summary</h2>
 
-              <div className="flex gap-3">
-                <img
-                  src="https://via.placeholder.com/80"
-                  className="h-16 w-16 rounded"
-                  alt=""
-                />
-                <div className="text-sm">
-                  <p className="font-medium">
-                    Apple MacBook Air M4 13"
-                  </p>
-                  <p className="text-muted-foreground">
-                    Rs. 1,69,000 × 3
-                  </p>
-                </div>
-              </div>
+              {isLoading ? (
+                "loading..."
+              ) : isError ? (
+                <p>{error.message}</p>
+              ) : cart.items.length === 0 ? (
+                "No cart items."
+              ) : (
+                <>
+                 {
+                  cart.items.map(item =>(
+                    <div className="flex gap-3">
+                    <img
+                      src={item.product_image}
+                      className="h-16 w-16 rounded"
+                      alt={item.product_title}
+                    />
+                    <div className="text-sm">
+                      <p className="font-medium">{item.product_title}</p>
+                      <p className="text-muted-foreground">
+                        ${item.product_price} × {item.quantity}
+                      </p>
+                    </div>
+                  </div>
+                  ))
+                 }
 
-              <div className="flex gap-3">
-                <img
-                  src="https://via.placeholder.com/80"
-                  className="h-16 w-16 rounded"
-                  alt=""
-                />
-                <div className="text-sm">
-                  <p className="font-medium">
-                    Samsung Galaxy Buds3 Pro
-                  </p>
-                  <p className="text-muted-foreground">
-                    Rs. 31,999 × 1
-                  </p>
-                </div>
-              </div>
+                  <Separator />
 
-              <Separator />
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Sub-total</span>
+                      <span>${cart.total}</span>
+                    </div>
 
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Sub-total</span>
-                  <span>Rs 5,38,999</span>
-                </div>
+                    <div className="flex justify-between">
+                      <span>Delivery Charge</span>
+                      <span className="text-green-600">FREE</span>
+                    </div>
 
-                <div className="flex justify-between">
-                  <span>Delivery Charge</span>
-                  <span className="text-green-600">FREE</span>
-                </div>
-
-                <div className="flex justify-between font-semibold">
-                  <span>Total</span>
-                  <span>Rs 5,38,999</span>
-                </div>
-              </div>
-
+                    <div className="flex justify-between font-semibold">
+                      <span>Total</span>
+                      <span>${cart.total}</span>
+                    </div>
+                  </div>
+                </>
+              )}
               <Separator />
 
               <Button type="submit" className="w-full mt-3">

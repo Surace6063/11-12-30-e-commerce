@@ -20,6 +20,7 @@ import Pagination from "../../components/Pagination";
 import { useDebounce } from "use-debounce";
 import { useDeleteProduct } from "../../api/product-services";
 import toast from "react-hot-toast";
+import ProductUpdateDilaogForm from "../../components/admin/ProductUpdateDialogForm";
 
 const PAGE_SIZE = 5
 
@@ -126,9 +127,7 @@ const ProductList = () => {
                 <TableCell>{item.stock}</TableCell>
                 <TableCell>{format(item.created_at,'yyyy-MM-dd')}</TableCell>
                 <TableCell className="text-right flex justify-end gap-2">
-                  <Button variant="secondary">
-                    <Edit className="h-4 w-4 text-sky-600" />
-                  </Button>
+                  <ProductUpdateDilaogForm product={item} />
                   <Button onClick={()=>handleDeleteProduct(item.id)} variant="secondary">
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
