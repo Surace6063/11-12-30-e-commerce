@@ -9,8 +9,11 @@ import { checkoutSchema } from "@/validation/checkout-validation";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/zustand/useAuthStore";
 import { useCarts } from "@/api/cart-services";
+import { useCreateOrder } from "../api/order-services";
+import toast from "react-hot-toast"
+import {Spinner} from "@/components/ui/spinner"
 
-export default function Checkout() {
+const Checkout = () => {
   const navigate = useNavigate();
 
   const { isAuthenticated } = useAuthStore();
@@ -28,9 +31,29 @@ export default function Checkout() {
     resolver: yupResolver(checkoutSchema),
   });
 
+  //  hook to create order
+  const {mutate,isPending} = useCreateOrder()
+
+
   const onSubmit = (data) => {
-    console.log("Checkout Data:", data);
-  };
+    // formatting cart items data
+    const items = cart?.items?.map((item) => ({
+      product: item.product, // product id
+      quantity: item.quantity,
+    }))
+
+    const payload = {
+      ...data,
+      items
+    }
+
+    mutate(payload,{
+      onSuccess: () => {
+        toast.success("Order Placed sucessfully.")
+      }
+    })
+
+  }
 
   return (
     <MaxWidthContainer className="my-6 max-w-6xl">
@@ -58,8 +81,8 @@ export default function Checkout() {
                   <Input
                     label="Full Name *"
                     placeholder="eg: John Doe"
-                    {...register("fullName")}
-                    error={errors?.fullName?.message}
+                    {...register("full_name")}
+                    error={errors?.full_name?.message}
                   />
 
                   <Input
@@ -73,8 +96,8 @@ export default function Checkout() {
                 <Input
                   label="Phone Number *"
                   placeholder="eg: 9800000011"
-                  {...register("phone")}
-                  error={errors?.phone?.message}
+                  {...register("phone_number")}
+                  error={errors?.phone_number?.message}
                 />
               </section>
 
@@ -88,12 +111,12 @@ export default function Checkout() {
                   <Input
                     label="Company Name"
                     placeholder="Abc Pvt Ltd"
-                    {...register("companyName")}
+                    {...register("company_name")}
                   />
                   <Input
                     label="PAN/VAT Number"
                     placeholder="12XXXXXX"
-                    {...register("panVat")}
+                    {...register("pan_number")}
                   />
                 </div>
               </section>
@@ -122,7 +145,7 @@ export default function Checkout() {
                   <Input
                     label="Zip Code"
                     placeholder="eg: 446000"
-                    {...register("zipCode")}
+                    {...register("zip_code")}
                   />
                 </div>
               </section>
@@ -142,23 +165,21 @@ export default function Checkout() {
                 "No cart items."
               ) : (
                 <>
-                 {
-                  cart.items.map(item =>(
-                    <div className="flex gap-3">
-                    <img
-                      src={item.product_image}
-                      className="h-16 w-16 rounded"
-                      alt={item.product_title}
-                    />
-                    <div className="text-sm">
-                      <p className="font-medium">{item.product_title}</p>
-                      <p className="text-muted-foreground">
-                        ${item.product_price} × {item.quantity}
-                      </p>
+                  {cart.items.map((item) => (
+                    <div key={item.id} className="flex gap-3">
+                      <img
+                        src={item.product_image}
+                        className="h-16 w-16 rounded"
+                        alt={item.product_title}
+                      />
+                      <div className="text-sm">
+                        <p className="font-medium">{item.product_title}</p>
+                        <p className="text-muted-foreground">
+                          ${item.product_price} × {item.quantity}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  ))
-                 }
+                  ))}
 
                   <Separator />
 
@@ -181,9 +202,78 @@ export default function Checkout() {
                 </>
               )}
               <Separator />
+              {/* payment method */}
+              <div className="space-y-3">
+                <h3 className="font-medium text-lg">Payment Method</h3>
 
-              <Button type="submit" className="w-full mt-3">
-                Place Order
+                {/* Cash on Delivery */}
+                <label
+                  htmlFor="cash"
+                  className="flex items-center gap-4 border border-border shadow rounded-xl p-4 cursor-pointer
+               hover:border-primary transition
+               has-checked:border-primary
+               has-checked:bg-primary/10
+               has-checked:scale-[1.02]"
+                >
+                  <input
+                    type="radio"
+                    id="cash"
+                    value="cod"
+                    {...register("payment_method")}
+                    className="hidden"
+                  />
+
+                  <img
+                    src="dollar.png"
+                    alt="Cash on Delivery"
+                    className="h-10 w-10 object-contain"
+                  />
+
+                  <span className="font-medium">Cash on Delivery</span>
+                </label>
+
+                {/* E-sewa */}
+                <label
+                  htmlFor="esewa"
+                  className="flex items-center gap-4 border border-border shadow rounded-xl p-4 cursor-pointer
+               hover:border-primary transition
+               has-checked:border-primary
+               has-checked:bg-primary/10
+               has-checked:scale-[1.02]"
+                >
+                  <input
+                    type="radio"
+                    id="esewa"
+                    value="esewa"
+                    {...register("payment_method")}
+                    className="hidden"
+                  />
+
+                  <img
+                    src="/esewa_logo.png"
+                    alt="E-sewa"
+                    className="h-10 w-16 object-contain bg-slate-800 px-2 rounded-md"
+                  />
+
+                  <span className="font-medium">E-sewa</span>
+                </label>
+
+                {/* error message */}
+                {errors?.payment_method && (
+                  <p className="text-sm text-red-500">
+                    {errors.payment_method.message}
+                  </p>
+                )}
+              </div>
+
+              <Button type="submit" disabled={isPending} className="w-full mt-3">
+               {
+                isPending ? <>
+                 <Spinner />
+                 submitting...
+                </> :
+                 "Place Order"
+               }
               </Button>
             </div>
           </div>
@@ -191,4 +281,6 @@ export default function Checkout() {
       </form>
     </MaxWidthContainer>
   );
-}
+};
+
+export default Checkout;

@@ -1,18 +1,30 @@
 import * as yup from "yup";
 
 export const checkoutSchema = yup.object({
-  fullName: yup.string().required("Full name is required"),
+  full_name: yup.string().required("Full name is required"),
+
   email: yup
     .string()
     .email("Invalid email address")
     .required("Email is required"),
-  phone: yup
+
+  phone_number: yup
     .string()
     .required("Phone number is required")
     .min(10, "Phone number must be at least 10 digits"),
-  companyName: yup.string().nullable(),
-  panVat: yup.string().nullable(),
+
+  company_name: yup.string().nullable(),
+
+  pan_number: yup.string().nullable(),
+
   city: yup.string().required("City/District is required"),
+
   address: yup.string().required("Address is required"),
-  zipCode: yup.string().nullable(),
-});
+
+  zip_code: yup.string().nullable(),
+
+  payment_method: yup
+    .string()
+    .required("Please select a payment method")
+    .oneOf(["cod", "esewa"], "Invalid payment method"),
+})
