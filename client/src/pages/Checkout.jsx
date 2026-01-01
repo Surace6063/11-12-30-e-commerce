@@ -50,6 +50,9 @@ const Checkout = () => {
     mutate(payload,{
       onSuccess: () => {
         toast.success("Order Placed sucessfully.")
+        if(data.payment_method === 'cod'){
+          navigate('/orders')
+        }
       }
     })
 

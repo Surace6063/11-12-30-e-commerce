@@ -8,49 +8,29 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/Button"
-import { Eye } from 'lucide-react';
+import { useOrders } from "../../api/order-services"
+import { format } from 'date-fns'
+import useAuthStore from "../../zustand/useAuthStore"
 
-/* ---------- DUMMY DATA ---------- */
-const orders = [
-  {
-    id: 1,
-    full_name: "Suresh Thapa",
-    email: "suresh@gmail.com",
-    payment_method: "cod",
-    status: "pending",
-    total: 215,
-    created_at: "2025-12-30",
-    items: [
-      {
-        id: 1,
-        product_title: "Chic Transparent Fashion Handbag",
-        quantity: 2,
-        price: 100,
-        subtotal: 200,
-        product_image:
-          "http://127.0.0.1:8000/media/product_images/1twoaDy.jpeg",
-      },
-      {
-        id: 2,
-        product_title: "Trendy Pink-Tinted Sunglasses",
-        quantity: 1,
-        price: 15,
-        subtotal: 15,
-        product_image:
-          "http://127.0.0.1:8000/media/product_images/0qQBkxX.jpeg",
-      },
-    ],
-  },
-]
 
 /* ---------- PAGE ---------- */
 const OrderList = () => {
+  const {isAuthenticated} = useAuthStore()
+  if(!isAuthenticated) return <p>Please login first to see your order history.</p>
+
+  // fetching order list
+  const {data:orders,isLoading,isError,error} = useOrders()
+
   const [openOrderId, setOpenOrderId] = useState(null)
 
   const toggleOrder = (id) => {
     setOpenOrderId(openOrderId === id ? null : id)
   }
+
+  if(isLoading) return <p>loading....</p>
+  if(isError) return <p>{error.message}</p>
+
+  if(orders?.length === 0) return <p>No order found!</p>
 
   return (
     <div >
@@ -91,7 +71,9 @@ const OrderList = () => {
                   <Badge variant="secondary">{order.status}</Badge>
                 </TableCell>
                 <TableCell>${order.total}</TableCell>
-                <TableCell>{order.created_at}</TableCell>
+                <TableCell>
+                  {format(order.created_at,'yyyy-MM-dd')}
+                </TableCell>
                 <TableCell  onClick={() => toggleOrder(order.id)} className="text-primary font-medium cursor-pointer hover:underline">
                  {
                   openOrderId ? "hide items" : "view items"

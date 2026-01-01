@@ -34,9 +34,12 @@ const ProfileMenu = () => {
           <li className="text-gray-700 font-medium cursor-pointer py-1 text-center w-full rounded-md hover:bg-slate-50 transition">
             Profile
           </li>
-          <li className="text-gray-700 font-medium cursor-pointer py-1 text-center w-full rounded-md hover:bg-slate-50 transition">
+          <Link className="text-gray-700 font-medium cursor-pointer py-1 text-center w-full rounded-md hover:bg-slate-50 transition" 
+          to="/orders">
+            <li>
             orders
           </li>
+          </Link>
           {user?.is_admin && (
             <Link
               className="text-gray-700 font-medium cursor-pointer py-1 text-center w-full rounded-md hover:bg-slate-50 transition"
