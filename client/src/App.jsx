@@ -13,6 +13,8 @@ import UserList from "./pages/admin/UserList"
 import OrderList from "./pages/admin/OrderList"
 import Checkout from "./pages/Checkout"
 import UserOrderList from "./pages/UserOrderList"
+import EsewaForm from "./pages/EsewaForm"
+import EsewaSuccessPage from "./pages/EsewaSuccessPage"
 
 const App = () => {
   return (
@@ -38,6 +40,8 @@ const App = () => {
       </Route>
 
        <Route path="/checkout" element={<Checkout />} />
+       <Route path="/esewa/form" element={<EsewaForm />} />
+       <Route path="/esewa/success/:id" element={<EsewaSuccessPage />} />
 
     </Routes>
    </>
