@@ -47,4 +47,21 @@ class LoginSerializer(TokenObtainPairSerializer):
         
         return data 
     
-  
+
+# user list serializer
+class UserListSerializer(serializers.ModelSerializer):
+    last_login = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", default=None, allow_null=True)
+    date_joined = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'email',
+            'is_staff',
+            'is_superuser',
+            'is_active',
+            'last_login',
+            'date_joined'
+        ]   

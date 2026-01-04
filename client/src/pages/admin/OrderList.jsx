@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { useOrders } from "../../api/order-services"
 import { format } from 'date-fns'
 import useAuthStore from "../../zustand/useAuthStore"
+import cn from "../../libs/cn"
 
 
 /* ---------- PAGE ---------- */
@@ -68,7 +69,11 @@ const OrderList = () => {
                   {order.payment_method}
                 </TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{order.status}</Badge>
+                  <Badge variant="primary" className={cn(
+                    order.status === "pending" ? "bg-yellow-300 text-white" : "bg-green-300 text-white"
+                  )}>
+                    {order.status}
+                    </Badge>
                 </TableCell>
                 <TableCell>${order.total}</TableCell>
                 <TableCell>

@@ -25,3 +25,14 @@ export const useCreateOrder = () => {
     },
   });
 };
+
+
+// verify esewa order
+export const useEsewaVerify = () => {
+  return useMutation({
+    mutationFn: async (payload) => {
+      const response = await apiRequest.post('/orders/esewa/verify/', payload)
+      return response.data
+    }
+  })
+}

@@ -113,3 +113,38 @@ class OrderListAPIView(generics.ListAPIView):
 
 
 
+
+class EsewaSuccessAPIView(APIView):
+    """
+    DRF endpoint to handle eSewa success redirect and update order status.
+    """
+
+    def post(self, request, *args, **kwargs):
+        order_id = request.data.get("order_id")
+        data = request.data.get("data")  # Base64 eSewa data
+
+        if not order_id or not data:
+            return Response(
+                {"message": "Missing order_id or data"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        order = get_object_or_404(Order, id=order_id)
+
+        try:
+            decoded_data = base64.b64decode(data).decode("utf-8")
+            data_dict = json.loads(decoded_data)
+        except Exception as e:
+            return Response(
+                {"message": f"Failed to decode data: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        status_value = data_dict.get("status", "").upper()
+
+        if status_value == "COMPLETE":
+            order.status = "completed"
+            order.save()
+            return Response({"message": "Payment successful. Order completed."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": f"Transaction status: {status_value}"}, status=status.HTTP_200_OK)     
