@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Order
+from .models import Order, OrderItem
 from .serializers import OrderSerializer
 
 import hmac, hashlib, base64, uuid, json
@@ -148,3 +148,50 @@ class EsewaSuccessAPIView(APIView):
             return Response({"message": "Payment successful. Order completed."}, status=status.HTTP_200_OK)
         else:
             return Response({"message": f"Transaction status: {status_value}"}, status=status.HTTP_200_OK)     
+
+
+
+
+
+# dashboard stat
+from datetime import timedelta
+from django.utils import timezone
+from django.db.models import Sum, F
+from django.contrib.auth.models import User
+from rest_framework.generics import GenericAPIView
+
+
+
+class DashboardStatsView(GenericAPIView):
+
+    def get(self, request):
+        six_months_ago = timezone.now() - timedelta(days=180)
+
+        # Total users (last 6 months)
+        total_users = User.objects.filter(
+            date_joined__gte=six_months_ago
+        ).count()
+
+        # Total orders (last 6 months)
+        total_orders = Order.objects.filter(
+            created_at__gte=six_months_ago
+        ).count()
+
+        # Total sales (last 6 months, completed only)
+        total_sales = (
+            OrderItem.objects
+            .filter(
+                order__status="completed",
+                order__created_at__gte=six_months_ago
+            )
+            .aggregate(
+                total=Sum(F("price") * F("quantity"))
+            )["total"] or 0
+        )
+
+        return Response({
+            "total_users": total_users,
+            "total_orders": total_orders,
+            "total_sales": total_sales,
+        })    
+
